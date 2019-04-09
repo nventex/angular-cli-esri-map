@@ -1,0 +1,16 @@
+<div class="title">
+  <h3>Starter project for Angular apps using the <a href="https://www.esri.com/en-us/home" target="_blank">ArcGIS</a> API for JavaScript</h3>
+</div>
+
+<ul>
+  <li (click)="onSelectMap(1)">1</li>
+  <li (click)="onSelectMap(2)">2</li>
+</ul>
+
+<app-esri-map 
+  #mapViewer
+  [center]="mapCenter" 
+  [basemap]="basemapType" 
+  [zoom]="mapZoomLevel"
+  [paths]="pathPoints">
+</app-esri-map>
