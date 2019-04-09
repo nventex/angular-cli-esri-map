@@ -10,7 +10,7 @@ export class AppComponent {
   @ViewChild('mapViewer') private mapViewElement;
   mapCenter = [-95.6290, 29.9849];
   basemapType = 'gray';
-  mapZoomLevel = 5;
+  mapZoomLevel = 14;
   pathPoints = [[]];
   pathData = [
     { id: 1, paths: [ [-10648789.3887225, 3509350.37862982], [-10644403.8142245, 3509465.03417226] ] }
