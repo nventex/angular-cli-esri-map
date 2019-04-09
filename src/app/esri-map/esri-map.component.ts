@@ -46,7 +46,6 @@ export class EsriMapComponent {
         'esri/geometry/Polyline'
       ]);
 
-      // Set type of map
       const mapProperties: esri.MapProperties = {
         basemap: this.baseMapName
       };
