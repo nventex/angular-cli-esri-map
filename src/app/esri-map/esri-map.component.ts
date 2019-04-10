@@ -15,15 +15,20 @@ export class EsriMapComponent {
   constructor() { }
 
   async initializeMap(model: MapModel) {
-      const [EsriMap, EsriMapView, Graphic, Polyline] = await loadModules([
+      const [EsriMap, EsriMapView, Graphic, Polyline, GraphicsLayer, Sketch] = await loadModules([
         'esri/Map',
         'esri/views/MapView',
         'esri/Graphic',
-        'esri/geometry/Polyline'
+        'esri/geometry/Polyline',
+        'esri/layers/GraphicsLayer',
+        'esri/widgets/Sketch',
       ]);
 
+      const layer = new GraphicsLayer();
+
       const mapProperties: esri.MapProperties = {
-        basemap: model.baseMap
+        basemap: model.baseMap,
+        layers: [layer]
       };
 
       const map: esri.Map = new EsriMap(mapProperties);
@@ -55,7 +60,41 @@ export class EsriMapComponent {
       };
 
       const mapView: esri.MapView = new EsriMapView(mapViewProperties);
-      mapView.graphics.add(graphic);
+
+      const sketch = new Sketch({
+        layer: layer,
+        view: mapView
+      });
+
+      layer.graphics.add(graphic);
+
+      mapView.ui.add(sketch, 'top-right');
+
+      sketch.on('create', e => {
+        if (e.state === 'complete') {
+          console.log('created');
+
+          if (e.tool !== 'polyline') {
+            console.log('not allowed');
+            layer.remove(e.graphic);
+          }
+
+          if (layer.graphics.length > 1) {
+            console.log('too many');
+            layer.remove(e.graphic);
+          }
+        }
+      });
+
+      sketch.on('update', e => {
+        if (e.state === 'complete') {
+          console.log('updated');
+        }
+      });
+
+      sketch.on('delete', e => {
+        console.log('deleted');
+      });            
 
       mapView.when(() => {
         mapView.goTo({ target: graphic, zoom: model.zoom });
