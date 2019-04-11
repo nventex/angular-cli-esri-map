@@ -49,11 +49,6 @@ export class EsriMapComponent {
       graphic.attributes = model.attributes;
       graphic.symbol = this.defaultSymbol;
 
-      graphic.popupTemplate = {
-        title: "{projectName}",
-        content: "Limits: {limits}"
-      };
-
       const mapViewProperties: esri.MapViewProperties = {
         container: this.mapViewElement.nativeElement,
         center: model.center,
@@ -77,13 +72,13 @@ export class EsriMapComponent {
           let valid = true;
           
           if (e.tool !== 'polyline') {
-            console.log('not allowed');
+            console.log('Only polyline graphics are supported at this time.');
             valid = false;
             layer.remove(e.graphic);
           }
 
           if (layer.graphics.length > 1) {
-            console.log('too many');
+            console.log('Multiple graphics are not supported at this time.');
             valid = false;
             layer.remove(e.graphic);
           }
