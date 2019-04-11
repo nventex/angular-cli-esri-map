@@ -21,4 +21,8 @@ export class AppComponent {
     this.mapModel.paths = this.pathData.find(p => p.id === id).paths;
     this.mapViewElement.render(this.mapModel);
   }
+
+  onEditCompleted(e) {
+    console.log(e);
+  }
 }

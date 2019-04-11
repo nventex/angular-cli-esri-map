@@ -1,4 +1,4 @@
-import { Component, ViewChild, ElementRef, Input } from '@angular/core';
+import { Component, ViewChild, ElementRef, Input, Output, EventEmitter } from '@angular/core';
 import { loadModules } from 'esri-loader';
 import { MapModel } from '../MapModel';
 import esri = __esri;
@@ -9,9 +9,16 @@ import esri = __esri;
   styleUrls: ['./esri-map.component.css']
 })
 export class EsriMapComponent {
-
+  @Output() editCompleted = new EventEmitter<number[][]>();
   @ViewChild('mapView') private mapViewElement: ElementRef;
   
+  private defaultSymbol = {
+    type: "simple-line",
+    color: "red",
+    width: 4,
+    style: "solid"
+  };
+
   constructor() { }
 
   async initializeMap(model: MapModel) {
@@ -40,12 +47,7 @@ export class EsriMapComponent {
 
       graphic.geometry = polyline;
       graphic.attributes = model.attributes;
-      graphic.symbol = {
-        type: "simple-line",
-        color: "red",
-        width: 4,
-        style: "solid"
-      };
+      graphic.symbol = this.defaultSymbol;
 
       graphic.popupTemplate = {
         title: "{projectName}",
@@ -66,39 +68,50 @@ export class EsriMapComponent {
         view: mapView
       });
 
-      layer.graphics.add(graphic);
+      // layer.graphics.add(graphic);
 
       mapView.ui.add(sketch, 'top-right');
 
       sketch.on('create', e => {
         if (e.state === 'complete') {
-          console.log('created');
-
+          let valid = true;
+          
           if (e.tool !== 'polyline') {
             console.log('not allowed');
+            valid = false;
             layer.remove(e.graphic);
           }
 
           if (layer.graphics.length > 1) {
             console.log('too many');
+            valid = false;
             layer.remove(e.graphic);
+          }
+          
+          if (valid) {
+            e.graphic.symbol = this.defaultSymbol;
+            this.onEditComplete(e.graphic.geometry.paths);
           }
         }
       });
 
       sketch.on('update', e => {
         if (e.state === 'complete') {
-          console.log('updated');
+          this.onEditComplete(e.graphics[0].geometry.paths);
         }
       });
 
       sketch.on('delete', e => {
-        console.log('deleted');
+        this.onEditComplete(null);
       });            
 
       mapView.when(() => {
         mapView.goTo({ target: graphic, zoom: model.zoom });
       });
+  }
+
+  private onEditComplete(paths: number[][]) {
+    this.editCompleted.emit(paths);
   }
 
   render(model: MapModel) {

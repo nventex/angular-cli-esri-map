@@ -3,6 +3,6 @@
   <li (click)="onSelectMap(2)">2</li>
 </ul>
 
-<app-esri-map 
+<app-esri-map (editCompleted)="onEditCompleted($event)"
   #mapViewer>
 </app-esri-map>

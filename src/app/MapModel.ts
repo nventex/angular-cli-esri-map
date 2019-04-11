@@ -1,7 +1,7 @@
 export class MapModel {
-  baseMap: string = 'gray';
+  baseMap: string = 'topo-vector';
   center: Array<number> = [-95.6290, 29.9849];
-  zoom: number = 14;
+  zoom: number = 9;
   paths: Array<Array<number>> = [[]];
   projectName: string;
   limits: string;
